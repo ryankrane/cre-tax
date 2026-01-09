@@ -480,7 +480,7 @@ export default function Page() {
 
         <footer>
           <p>
-            Built by <a href="#">Ryan Krane</a> · RK Tax Calc © 2025
+            Built by <a href="#">Ryan Krane</a> · RK Tax Calc © 2025 · v1.0
           </p>
         </footer>
       </div>
