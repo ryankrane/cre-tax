@@ -289,6 +289,25 @@ export default function Page() {
           </div>
         </header>
 
+        {/* Info Section */}
+        <div className="info-section">
+          <h3>Why Calculate Property Taxes?</h3>
+          <p>
+            When buying commercial real estate, property taxes are one of the largest ongoing expenses you'll face.
+            In Florida, taxes are calculated using a <strong>millage rate</strong> (mills per $1,000 of assessed value)
+            that varies by county. During underwriting, you need accurate tax estimates to:
+          </p>
+          <ul>
+            <li><strong>Calculate Net Operating Income (NOI)</strong> — Property taxes reduce your annual income</li>
+            <li><strong>Determine Cash Flow</strong> — Monthly tax payments impact your ability to service debt</li>
+            <li><strong>Evaluate Deal Viability</strong> — High taxes can make or break a deal's returns</li>
+          </ul>
+          <p>
+            This tool automatically detects your property's county from the ZIP code and calculates annual and
+            monthly tax obligations based on the purchase price and assessment ratio.
+          </p>
+        </div>
+
         {/* Property Card */}
         <div className="card">
           <div className="card-header">
@@ -557,6 +576,53 @@ export default function Page() {
         .theme-toggle button svg {
           width: 18px;
           height: 18px;
+        }
+
+        .info-section {
+          background: var(--carolina-pale);
+          border-radius: 16px;
+          padding: 28px 32px;
+          margin-bottom: 20px;
+          border: 1px solid var(--border-light);
+        }
+
+        .info-section h3 {
+          font-size: 1.25rem;
+          font-weight: 600;
+          color: var(--text-primary);
+          margin-bottom: 16px;
+        }
+
+        .info-section p {
+          font-size: 0.95rem;
+          line-height: 1.6;
+          color: var(--text-primary);
+          margin-bottom: 14px;
+        }
+
+        .info-section p:last-child {
+          margin-bottom: 0;
+        }
+
+        .info-section ul {
+          margin: 16px 0;
+          padding-left: 24px;
+        }
+
+        .info-section li {
+          font-size: 0.95rem;
+          line-height: 1.7;
+          color: var(--text-primary);
+          margin-bottom: 10px;
+        }
+
+        .info-section li:last-child {
+          margin-bottom: 0;
+        }
+
+        .info-section strong {
+          color: var(--carolina-dark);
+          font-weight: 600;
         }
 
         .card {
