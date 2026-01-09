@@ -150,24 +150,36 @@ export default function Page() {
     setCountyResult((p) => ({ ...p, show: false }));
 
     try {
-      const encoded = encodeURIComponent(addr);
-      const url = `https://geocoding.geo.census.gov/geocoder/geographies/onelineaddress?address=${encoded}&benchmark=Public_AR_Current&vintage=Current_Current&format=json`;
+      // Extract zip code from address
+      const zipMatch = addr.match(/\b(\d{5})\b/);
+      if (!zipMatch) {
+        showCountyResult("Please include a 5-digit ZIP code in the address", true);
+        setLookupLoading(false);
+        return;
+      }
 
-      const res = await fetch(url);
+      const zipCode = zipMatch[1];
+
+      // Use ZipCodeAPI to get county
+      const res = await fetch(`https://api.zippopotam.us/us/${zipCode}`);
+
+      if (!res.ok) {
+        showCountyResult("ZIP code not found — please check and try again", true);
+        setLookupLoading(false);
+        return;
+      }
+
       const data = await res.json();
+      const countyName = data?.places?.[0]?.["state abbreviation"] === "FL" ?
+        data?.places?.[0]?.["place name"] : null;
 
-      const match = data?.result?.addressMatches?.[0];
-      if (!match) {
-        showCountyResult("Address not found — try adding city and state", true);
+      if (!countyName || data?.places?.[0]?.["state abbreviation"] !== "FL") {
+        showCountyResult("Please enter a Florida address", true);
+        setLookupLoading(false);
         return;
       }
 
-      const countyName: string | undefined = match?.geographies?.Counties?.[0]?.NAME;
-      if (!countyName) {
-        showCountyResult("Could not determine county from address", true);
-        return;
-      }
-
+      // Try to match county
       const matched = selectCountyByName(countyName);
       if (matched) {
         showCountyResult(`Found ${countyName} County — auto-selected`, false);
