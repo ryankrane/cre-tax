@@ -482,37 +482,42 @@ export default function Page() {
 
         :root {
           --font: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-          --carolina: #4b9cd3;
-          --carolina-light: #7bafd4;
-          --carolina-pale: #e8f4fc;
-          --carolina-dark: #3a7ca5;
+          --carolina: #0066cc;
+          --carolina-light: #4d94ff;
+          --carolina-pale: #e6f0ff;
+          --carolina-dark: #004d99;
+          --accent: #00b894;
 
-          --bg-primary: #ffffff;
-          --bg-secondary: #f5f5f7;
+          --bg-primary: #fafbfc;
+          --bg-secondary: #f4f6f8;
           --bg-card: #ffffff;
-          --text-primary: #1d1d1f;
-          --text-secondary: #6e6e73;
-          --border: #d2d2d7;
-          --border-light: #e8e8ed;
-          --shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
-          --shadow-hover: 0 8px 32px rgba(0, 0, 0, 0.1);
-          --input-bg: #f5f5f7;
+          --text-primary: #0a1f44;
+          --text-secondary: #5e6c84;
+          --border: #dfe1e6;
+          --border-light: #ebecf0;
+          --shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.06);
+          --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08), 0 8px 32px rgba(0, 0, 0, 0.1);
+          --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+          --input-bg: #f7f8fa;
           --toggle-bg: #e8e8ed;
         }
 
         [data-theme="dark"] {
-          --bg-primary: #000000;
-          --bg-secondary: #1c1c1e;
-          --bg-card: #1c1c1e;
-          --text-primary: #f5f5f7;
-          --text-secondary: #a1a1a6;
-          --border: #38383a;
-          --border-light: #2c2c2e;
-          --shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
-          --shadow-hover: 0 8px 32px rgba(0, 0, 0, 0.4);
-          --input-bg: #2c2c2e;
-          --toggle-bg: #38383a;
-          --carolina-pale: rgba(75, 156, 211, 0.15);
+          --bg-primary: #0d1117;
+          --bg-secondary: #161b22;
+          --bg-card: #1c2128;
+          --text-primary: #e6edf3;
+          --text-secondary: #8b949e;
+          --border: #30363d;
+          --border-light: #21262d;
+          --shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.4);
+          --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.4), 0 8px 32px rgba(0, 0, 0, 0.5);
+          --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
+          --input-bg: #21262d;
+          --toggle-bg: #30363d;
+          --carolina-pale: rgba(0, 102, 204, 0.15);
+          --carolina: #4d94ff;
+          --carolina-dark: #0066cc;
         }
 
         body {
@@ -525,16 +530,18 @@ export default function Page() {
         }
 
         .container {
-          max-width: 720px;
+          max-width: 840px;
           margin: 0 auto;
-          padding: 48px 24px 80px;
+          padding: 64px 32px 100px;
         }
 
         header {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 48px;
+          margin-bottom: 56px;
+          padding-bottom: 24px;
+          border-bottom: 1px solid var(--border-light);
         }
 
         .brand {
@@ -543,20 +550,27 @@ export default function Page() {
         }
 
         .logo {
-          font-size: 2rem;
-          font-weight: 700;
-          letter-spacing: -0.03em;
+          font-size: 2.25rem;
+          font-weight: 800;
+          letter-spacing: -0.04em;
           color: var(--text-primary);
+          background: linear-gradient(135deg, var(--carolina) 0%, var(--carolina-dark) 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
         }
 
         .logo span {
-          color: var(--carolina);
+          color: var(--accent);
+          -webkit-text-fill-color: var(--accent);
         }
 
         .tagline {
-          font-size: 0.9rem;
+          font-size: 0.875rem;
+          font-weight: 500;
           color: var(--text-secondary);
-          margin-top: 2px;
+          margin-top: 4px;
+          letter-spacing: 0.01em;
         }
 
         .theme-toggle {
@@ -595,25 +609,43 @@ export default function Page() {
         }
 
         .info-section {
-          background: var(--carolina-pale);
+          background: linear-gradient(135deg, var(--carolina-pale) 0%, rgba(0, 184, 148, 0.08) 100%);
           border-radius: 16px;
-          padding: 28px 32px;
-          margin-bottom: 20px;
+          padding: 32px 36px;
+          margin-bottom: 32px;
           border: 1px solid var(--border-light);
+          box-shadow: 0 2px 8px rgba(0, 102, 204, 0.06);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .info-section::before {
+          content: '';
+          position: absolute;
+          top: -50%;
+          right: -20%;
+          width: 300px;
+          height: 300px;
+          background: radial-gradient(circle, rgba(0, 102, 204, 0.1) 0%, transparent 70%);
+          border-radius: 50%;
         }
 
         .info-section h3 {
-          font-size: 1.25rem;
-          font-weight: 600;
+          font-size: 1.375rem;
+          font-weight: 700;
           color: var(--text-primary);
           margin-bottom: 16px;
+          position: relative;
+          z-index: 1;
         }
 
         .info-section p {
-          font-size: 0.95rem;
-          line-height: 1.6;
+          font-size: 1rem;
+          line-height: 1.65;
           color: var(--text-primary);
           margin-bottom: 14px;
+          position: relative;
+          z-index: 1;
         }
 
         .info-section p:last-child {
@@ -643,16 +675,35 @@ export default function Page() {
 
         .card {
           background: var(--bg-card);
-          border-radius: 20px;
-          padding: 32px;
-          margin-bottom: 20px;
+          border-radius: 16px;
+          padding: 40px;
+          margin-bottom: 24px;
           box-shadow: var(--shadow);
           border: 1px solid var(--border-light);
-          transition: all 0.3s ease;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 3px;
+          background: linear-gradient(90deg, var(--carolina) 0%, var(--carolina-light) 50%, var(--accent) 100%);
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+
+        .card:hover::before {
+          opacity: 1;
         }
 
         .card:hover {
           box-shadow: var(--shadow-hover);
+          transform: translateY(-2px);
         }
 
         .card-header {
@@ -902,26 +953,49 @@ export default function Page() {
 
         .btn-primary {
           width: 100%;
-          padding: 16px 32px;
-          background: var(--carolina);
+          padding: 18px 32px;
+          background: linear-gradient(135deg, var(--carolina) 0%, var(--carolina-dark) 100%);
           border: none;
-          border-radius: 14px;
+          border-radius: 12px;
           color: white;
           font-family: var(--font);
-          font-size: 1rem;
+          font-size: 1.0625rem;
           font-weight: 600;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 0 2px 8px rgba(0, 102, 204, 0.2);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .btn-primary::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(135deg, var(--carolina-dark) 0%, var(--carolina) 100%);
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+
+        .btn-primary:hover::before {
+          opacity: 1;
         }
 
         .btn-primary:hover {
-          background: var(--carolina-dark);
-          transform: translateY(-1px);
-          box-shadow: 0 4px 16px rgba(75, 156, 211, 0.4);
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(0, 102, 204, 0.35);
         }
 
         .btn-primary:active {
           transform: translateY(0);
+        }
+
+        .btn-primary span {
+          position: relative;
+          z-index: 1;
         }
 
         .results {
@@ -975,39 +1049,64 @@ export default function Page() {
         .tax-summary {
           background: linear-gradient(135deg, var(--carolina) 0%, var(--carolina-dark) 100%);
           border-radius: 16px;
-          padding: 28px;
+          padding: 36px;
           color: white;
           text-align: center;
+          box-shadow: var(--shadow-lg);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .tax-summary::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
         }
 
         .tax-summary-label {
-          font-size: 0.85rem;
-          opacity: 0.9;
-          margin-bottom: 8px;
+          font-size: 0.9375rem;
+          opacity: 0.95;
+          margin-bottom: 20px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          position: relative;
+          z-index: 1;
         }
 
         .tax-summary-grid {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 24px;
-          margin-top: 8px;
+          gap: 32px;
+          margin-top: 12px;
+          position: relative;
+          z-index: 1;
         }
 
         .tax-amount {
           display: flex;
           flex-direction: column;
+          background: rgba(255, 255, 255, 0.1);
+          padding: 24px;
+          border-radius: 12px;
+          backdrop-filter: blur(10px);
         }
 
         .tax-amount-value {
-          font-size: 2rem;
-          font-weight: 700;
-          letter-spacing: -0.02em;
+          font-size: 2.25rem;
+          font-weight: 800;
+          letter-spacing: -0.03em;
         }
 
         .tax-amount-period {
-          font-size: 0.8rem;
-          opacity: 0.85;
-          margin-top: 2px;
+          font-size: 0.875rem;
+          opacity: 0.9;
+          margin-top: 4px;
+          font-weight: 500;
         }
 
         footer {
