@@ -26,7 +26,7 @@ const COUNTIES: CountyOption[] = [
   { label: "Seminole County, FL — 18.79 mills", mills: 18.789, dataCounty: "seminole" },
 ];
 
-const STORAGE_KEY = "levy.v1";
+const STORAGE_KEY = "rktaxcalc.v1";
 
 function formatCurrency(num: number): string {
   if (!Number.isFinite(num)) return "—";
@@ -230,7 +230,7 @@ export default function Page() {
         <header>
           <div className="brand">
             <div className="logo">
-              Levy<span>.</span>
+              RK Tax Calc<span>.</span>
             </div>
             <div className="tagline">Property Tax Calculator</div>
           </div>
@@ -445,7 +445,7 @@ export default function Page() {
 
         <footer>
           <p>
-            Built by <a href="#">Ryan Krane</a> · Levy © 2025
+            Built by <a href="#">Ryan Krane</a> · RK Tax Calc © 2025
           </p>
         </footer>
       </div>
