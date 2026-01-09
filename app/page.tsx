@@ -48,8 +48,7 @@ export default function Page() {
   // Inputs
   const [theme, setTheme] = useState<Theme>("light");
   const [address, setAddress] = useState("");
-  const [countyValue, setCountyValue] = useState<string>(""); // mills number string | "custom" | ""
-  const [customMillage, setCustomMillage] = useState<string>("");
+  const [countyValue, setCountyValue] = useState<string>(""); // mills number string
   const [purchasePrice, setPurchasePrice] = useState<string>("");
   const [assessmentPct, setAssessmentPct] = useState<number>(75);
 
@@ -72,14 +71,12 @@ export default function Page() {
         theme: Theme;
         address: string;
         countyValue: string;
-        customMillage: string;
         purchasePrice: string;
         assessmentPct: number;
       }>;
       if (data.theme === "light" || data.theme === "dark") setTheme(data.theme);
       if (typeof data.address === "string") setAddress(data.address);
       if (typeof data.countyValue === "string") setCountyValue(data.countyValue);
-      if (typeof data.customMillage === "string") setCustomMillage(data.customMillage);
       if (typeof data.purchasePrice === "string") setPurchasePrice(data.purchasePrice);
       if (typeof data.assessmentPct === "number") setAssessmentPct(data.assessmentPct);
     } catch {
@@ -92,12 +89,12 @@ export default function Page() {
     try {
       localStorage.setItem(
         STORAGE_KEY,
-        JSON.stringify({ theme, address, countyValue, customMillage, purchasePrice, assessmentPct })
+        JSON.stringify({ theme, address, countyValue, purchasePrice, assessmentPct })
       );
     } catch {
       // ignore
     }
-  }, [theme, address, countyValue, customMillage, purchasePrice, assessmentPct]);
+  }, [theme, address, countyValue, purchasePrice, assessmentPct]);
 
   // Apply theme to <html data-theme="...">
   useEffect(() => {
@@ -105,9 +102,8 @@ export default function Page() {
   }, [theme]);
 
   const millageRate = useMemo(() => {
-    if (countyValue === "custom") return safeNumber(customMillage);
     return safeNumber(countyValue);
-  }, [countyValue, customMillage]);
+  }, [countyValue]);
 
   const calc = useMemo(() => {
     const pp = safeNumber(purchasePrice);
@@ -193,8 +189,7 @@ export default function Page() {
       if (matched) {
         showCountyResult(`Found ${countyName} County — auto-selected`, false);
       } else {
-        setCountyValue("custom");
-        showCountyResult(`Found ${countyName} County — enter millage rate below`, false);
+        showCountyResult(`${countyName} County not in our database`, true);
       }
     } catch {
       if (!isAutoLookup) {
@@ -249,15 +244,6 @@ export default function Page() {
   }
 
   const sliderLabel = `${assessmentPct}%`;
-
-  const selectedMillageLabel =
-    countyValue === "custom"
-      ? customMillage
-        ? `${safeNumber(customMillage).toFixed(2)} mills`
-        : "Custom"
-      : countyValue
-        ? `${safeNumber(countyValue).toFixed(2)} mills`
-        : "—";
 
   return (
     <>
@@ -344,40 +330,6 @@ export default function Page() {
               <span>{countyResult.message}</span>
             </div>
           </div>
-
-          <div className="form-group">
-            <label htmlFor="county">County & Millage Rate</label>
-            <select
-              id="county"
-              value={countyValue}
-              onChange={(e) => {
-                const v = e.target.value;
-                setCountyValue(v);
-              }}
-            >
-              <option value="">Select a county...</option>
-              {COUNTIES.filter((c) => c.mills !== "custom").map((c) => (
-                <option key={c.label} value={String(c.mills)} data-county={c.dataCounty}>
-                  {c.label}
-                </option>
-              ))}
-              <option value="custom">Custom millage rate...</option>
-            </select>
-          </div>
-
-          <div className={`form-group custom-millage ${countyValue === "custom" ? "show" : ""}`} id="customMillageGroup">
-            <label htmlFor="customMillage">Custom Millage Rate (mills)</label>
-            <input
-              type="number"
-              id="customMillage"
-              placeholder="e.g., 18.5"
-              step={0.0001}
-              min={0}
-              max={50}
-              value={customMillage}
-              onChange={(e) => setCustomMillage(e.target.value)}
-            />
-          </div>
         </div>
 
         {/* Calculation Card */}
@@ -457,7 +409,7 @@ export default function Page() {
 
             <div className="result-item">
               <div className="result-label">Millage Rate</div>
-              <div className="result-value">{millageRate ? selectedMillageLabel : "—"}</div>
+              <div className="result-value">{millageRate ? `${millageRate.toFixed(2)} mills` : "—"}</div>
             </div>
           </div>
 
