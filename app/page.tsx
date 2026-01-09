@@ -38,6 +38,16 @@ function formatCurrency(num: number): string {
   }).format(num);
 }
 
+function formatPriceInput(value: string): string {
+  // Remove all non-digits
+  const digits = value.replace(/\D/g, "");
+  if (!digits) return "";
+
+  // Format with commas
+  const num = parseInt(digits, 10);
+  return "$" + num.toLocaleString("en-US");
+}
+
 function safeNumber(v: string): number {
   const cleaned = v.replace(/,/g, "").trim();
   const n = Number(cleaned);
@@ -428,13 +438,14 @@ export default function Page() {
           <div className="form-group">
             <label htmlFor="purchasePrice">Purchase Price</label>
             <input
-              type="number"
+              type="text"
               id="purchasePrice"
-              placeholder="1,500,000"
-              min={0}
-              step={1000}
-              value={purchasePrice}
-              onChange={(e) => setPurchasePrice(e.target.value)}
+              placeholder="$1,500,000"
+              value={purchasePrice ? formatPriceInput(purchasePrice) : ""}
+              onChange={(e) => {
+                const digits = e.target.value.replace(/\D/g, "");
+                setPurchasePrice(digits);
+              }}
             />
           </div>
 
