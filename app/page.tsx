@@ -173,12 +173,33 @@ export default function Page() {
       }
 
       const data = await res.json();
-      const countyName = data?.places?.[0]?.["state abbreviation"] === "FL" ?
-        data?.places?.[0]?.["place name"] : null;
 
-      if (!countyName || data?.places?.[0]?.["state abbreviation"] !== "FL") {
+      // Check if it's a Florida ZIP
+      if (data?.places?.[0]?.["state abbreviation"] !== "FL") {
         if (!isAutoLookup) {
           showCountyResult("Please enter a Florida address", true);
+        }
+        setLookupLoading(false);
+        return;
+      }
+
+      // Use FCC API to get county from coordinates
+      const fccRes = await fetch(`https://geo.fcc.gov/api/census/area?lat=${data.places[0].latitude}&lon=${data.places[0].longitude}&format=json`);
+
+      if (!fccRes.ok) {
+        if (!isAutoLookup) {
+          showCountyResult("Could not determine county", true);
+        }
+        setLookupLoading(false);
+        return;
+      }
+
+      const fccData = await fccRes.json();
+      const countyName = fccData?.results?.[0]?.county_name;
+
+      if (!countyName) {
+        if (!isAutoLookup) {
+          showCountyResult("Could not determine county from ZIP code", true);
         }
         setLookupLoading(false);
         return;
@@ -293,18 +314,12 @@ export default function Page() {
         <div className="info-section">
           <h3>Why Calculate Property Taxes?</h3>
           <p>
-            When buying commercial real estate, property taxes are one of the largest ongoing expenses you'll face.
-            In Florida, taxes are calculated using a <strong>millage rate</strong> (mills per $1,000 of assessed value)
-            that varies by county. During underwriting, you need accurate tax estimates to:
+            When a property is sold or purchased, property taxes are <strong>reassessed</strong> based on the new purchase price.
+            In Florida, taxes are calculated using a <strong>millage rate</strong> (mills per $1,000 of assessed value) that varies by county.
           </p>
-          <ul>
-            <li><strong>Calculate Net Operating Income (NOI)</strong> — Property taxes reduce your annual income</li>
-            <li><strong>Determine Cash Flow</strong> — Monthly tax payments impact your ability to service debt</li>
-            <li><strong>Evaluate Deal Viability</strong> — High taxes can make or break a deal's returns</li>
-          </ul>
           <p>
-            This tool automatically detects your property's county from the ZIP code and calculates annual and
-            monthly tax obligations based on the purchase price and assessment ratio.
+            This tool automatically detects your property's county from the ZIP code and calculates the new annual and
+            monthly tax obligations you'll face after the purchase closes.
           </p>
         </div>
 
