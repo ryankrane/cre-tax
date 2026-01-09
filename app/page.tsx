@@ -183,19 +183,70 @@ export default function Page() {
         return;
       }
 
-      // Use FCC API to get county from coordinates
-      const fccRes = await fetch(`https://geo.fcc.gov/api/census/area?lat=${data.places[0].latitude}&lon=${data.places[0].longitude}&format=json`);
+      let countyName = null;
 
-      if (!fccRes.ok) {
-        if (!isAutoLookup) {
-          showCountyResult("Could not determine county", true);
+      // Try FCC API first with timeout
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
+
+        const fccRes = await fetch(
+          `https://geo.fcc.gov/api/census/area?lat=${data.places[0].latitude}&lon=${data.places[0].longitude}&format=json`,
+          { signal: controller.signal }
+        );
+
+        clearTimeout(timeoutId);
+
+        if (fccRes.ok) {
+          const fccData = await fccRes.json();
+          countyName = fccData?.results?.[0]?.county_name;
         }
-        setLookupLoading(false);
-        return;
+      } catch (fccError) {
+        // FCC API failed, will fall back to direct mapping
+        console.log("FCC API failed, using fallback");
       }
 
-      const fccData = await fccRes.json();
-      const countyName = fccData?.results?.[0]?.county_name;
+      // Fallback: Use direct ZIP to county mapping for common FL counties
+      if (!countyName) {
+        const cityName = data?.places?.[0]?.["place name"]?.toLowerCase() || "";
+
+        // Direct mapping based on city names
+        const cityToCounty: Record<string, string> = {
+          "miami": "Miami-Dade",
+          "hialeah": "Miami-Dade",
+          "coral gables": "Miami-Dade",
+          "doral": "Miami-Dade",
+          "homestead": "Miami-Dade",
+          "fort lauderdale": "Broward",
+          "hollywood": "Broward",
+          "pembroke pines": "Broward",
+          "coral springs": "Broward",
+          "miramar": "Broward",
+          "west palm beach": "Palm Beach",
+          "boca raton": "Palm Beach",
+          "boynton beach": "Palm Beach",
+          "delray beach": "Palm Beach",
+          "wellington": "Palm Beach",
+          "tampa": "Hillsborough",
+          "orlando": "Orange",
+          "jacksonville": "Duval",
+          "st petersburg": "Pinellas",
+          "clearwater": "Pinellas",
+          "fort myers": "Lee",
+          "cape coral": "Lee",
+          "lakeland": "Polk",
+          "melbourne": "Brevard",
+          "daytona beach": "Volusia",
+          "sanford": "Seminole"
+        };
+
+        for (const [city, county] of Object.entries(cityToCounty)) {
+          if (cityName.includes(city)) {
+            countyName = county;
+            break;
+          }
+        }
+      }
 
       if (!countyName) {
         if (!isAutoLookup) {
@@ -212,7 +263,7 @@ export default function Page() {
       } else {
         showCountyResult(`${countyName} County not in our database`, true);
       }
-    } catch {
+    } catch (error) {
       if (!isAutoLookup) {
         showCountyResult("Lookup failed — check your connection", true);
       }
