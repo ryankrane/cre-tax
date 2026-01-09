@@ -61,6 +61,7 @@ export default function Page() {
     isError: false,
   });
   const [resultsVisible, setResultsVisible] = useState(false);
+  const [autoLookupTimeout, setAutoLookupTimeout] = useState<NodeJS.Timeout | null>(null);
 
   // Load persisted state
   useEffect(() => {
@@ -139,10 +140,12 @@ export default function Page() {
     return false;
   }
 
-  async function lookupCounty() {
+  async function lookupCounty(isAutoLookup = false) {
     const addr = address.trim();
     if (!addr) {
-      showCountyResult("Please enter an address first", true);
+      if (!isAutoLookup) {
+        showCountyResult("Please enter an address first", true);
+      }
       return;
     }
 
@@ -153,7 +156,9 @@ export default function Page() {
       // Extract zip code from address
       const zipMatch = addr.match(/\b(\d{5})\b/);
       if (!zipMatch) {
-        showCountyResult("Please include a 5-digit ZIP code in the address", true);
+        if (!isAutoLookup) {
+          showCountyResult("Please include a 5-digit ZIP code in the address", true);
+        }
         setLookupLoading(false);
         return;
       }
@@ -164,7 +169,9 @@ export default function Page() {
       const res = await fetch(`https://api.zippopotam.us/us/${zipCode}`);
 
       if (!res.ok) {
-        showCountyResult("ZIP code not found — please check and try again", true);
+        if (!isAutoLookup) {
+          showCountyResult("ZIP code not found — please check and try again", true);
+        }
         setLookupLoading(false);
         return;
       }
@@ -174,7 +181,9 @@ export default function Page() {
         data?.places?.[0]?.["place name"] : null;
 
       if (!countyName || data?.places?.[0]?.["state abbreviation"] !== "FL") {
-        showCountyResult("Please enter a Florida address", true);
+        if (!isAutoLookup) {
+          showCountyResult("Please enter a Florida address", true);
+        }
         setLookupLoading(false);
         return;
       }
@@ -188,11 +197,37 @@ export default function Page() {
         showCountyResult(`Found ${countyName} County — enter millage rate below`, false);
       }
     } catch {
-      showCountyResult("Lookup failed — check your connection", true);
+      if (!isAutoLookup) {
+        showCountyResult("Lookup failed — check your connection", true);
+      }
     } finally {
       setLookupLoading(false);
     }
   }
+
+  // Auto-lookup when ZIP code is detected in address
+  useEffect(() => {
+    // Clear any existing timeout
+    if (autoLookupTimeout) {
+      clearTimeout(autoLookupTimeout);
+    }
+
+    // Check if address contains a 5-digit ZIP code
+    const zipMatch = address.match(/\b(\d{5})\b/);
+    if (zipMatch) {
+      // Debounce the lookup by 800ms
+      const timeout = setTimeout(() => {
+        lookupCounty(true);
+      }, 800);
+      setAutoLookupTimeout(timeout);
+    }
+
+    return () => {
+      if (autoLookupTimeout) {
+        clearTimeout(autoLookupTimeout);
+      }
+    };
+  }, [address]);
 
   function calculateTax() {
     if (!calc.purchasePrice || calc.purchasePrice <= 0) {
@@ -272,7 +307,7 @@ export default function Page() {
         <div className="card">
           <div className="card-header">
             <h2 className="card-title">Property Details</h2>
-            <p className="card-subtitle">Enter an address to auto-detect the county</p>
+            <p className="card-subtitle">Enter a ZIP code to auto-detect the county</p>
           </div>
 
           <div className="form-group">
@@ -287,14 +322,14 @@ export default function Page() {
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
-                    lookupCounty();
+                    lookupCounty(false);
                   }
                 }}
               />
               <button
                 className={`btn-lookup ${lookupLoading ? "loading" : ""}`}
                 id="lookupBtn"
-                onClick={lookupCounty}
+                onClick={() => lookupCounty(false)}
                 disabled={lookupLoading}
                 type="button"
               >
