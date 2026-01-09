@@ -314,8 +314,9 @@ export default function Page() {
         <div className="info-section">
           <h3>Why Calculate Property Taxes?</h3>
           <p>
-            When a property is sold or purchased, property taxes are <strong>reassessed</strong> based on the new purchase price.
-            In Florida, taxes are calculated using a <strong>millage rate</strong> (mills per $1,000 of assessed value) that varies by county.
+            I built this tool to help me underwrite commercial real estate acquisitions. When a property is sold or purchased,
+            property taxes are <strong>reassessed</strong> based on the new purchase price. In Florida, taxes are calculated
+            using a <strong>millage rate</strong> (mills per $1,000 of assessed value) that varies by county.
           </p>
           <p>
             This tool automatically detects your property's county from the ZIP code and calculates the new annual and
